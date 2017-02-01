@@ -1,0 +1,67 @@
+---
+title: "party analysis"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+```{r, echo=TRUE}
+library(tm)
+library(wordcloud)
+library(xlsx)
+library(dplyr)
+library(tidytext)
+library(SnowballC) 
+
+```
+
+
+
+
+```{r, echo=TRUE}
+folder.path="../data/InauguralSpeeches/"
+speeches=list.files(path = folder.path, pattern = "*.txt")
+prez.out=substr(speeches, 6, nchar(speeches)-4)
+
+length.speeches=rep(NA, length(speeches))
+ff.all<-Corpus(DirSource(folder.path))
+
+
+ff.all<-tm_map(ff.all, stripWhitespace)
+ff.all<-tm_map(ff.all, content_transformer(tolower))
+ff.all<-tm_map(ff.all, removeWords, stopwords("english"))
+ff.all<-tm_map(ff.all, removeWords, character(0))
+ff.all<-tm_map(ff.all, removePunctuation)
+
+tdm.all<-TermDocumentMatrix(ff.all)
+tdm.tidy=tidy(tdm.all)
+
+tdm.tidy$name<-substr(tdm.tidy$document,6,nchar(tdm.tidy$document)-6)
+
+InaugurationInfo<-read.xlsx("../data/InaugurationInfo.xlsx",1)
+ana_party<-merge(tdm.tidy,InaugurationInfo,by.x="name",by.y="File",all = TRUE)
+
+w_Repub<-ana_party[ana_party$Party=="Republican",c(2,4)]
+w_Demo<-ana_party[ana_party$Party=="Democratic",c(2,4)]
+
+
+w_Repub<-summarise(group_by(w_Repub, term), sum(count))
+w_Demo<-summarise(group_by(w_Demo, term), sum(count))
+
+
+w_ana<-merge(w_Demo,w_Repub,by="term",all = TRUE)
+colnames(w_ana)<-c("term","Demo","Repub")
+w_ana$Demo[is.na(w_ana$Demo)]<-0
+w_ana$Repub[is.na(w_ana$Repub)]<-0
+
+w_ana$odd<-log(w_ana$Demo/w_ana$Repub)
+
+
+Repub<-w_ana[w_ana$odd==-Inf|w_ana$odd<(-0.8),c(1,3,4)]
+Demo<-w_ana[w_ana$odd==Inf|w_ana$odd>(0.8),c(1,2,4)]
+
+
+wordcloud(Repub$term, Repub$Repub,min.freq = 5)
+wordcloud(Demo$term, Demo$Demo)
+
+```

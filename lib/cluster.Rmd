@@ -1,0 +1,86 @@
+---
+title: "cluster"
+output: html_notebook
+---
+
+```{r}
+library(tm)
+library(xlsx)
+library(wordcloud)
+library(RColorBrewer)
+library(dplyr)
+library(tidytext)
+library(cluster)
+
+```
+
+
+```{r, echo=TRUE}
+folder.path="../data/InauguralSpeeches/"
+speeches=list.files(path = folder.path, pattern = "*.txt")
+prez.out=substr(speeches, 6, nchar(speeches)-4)
+
+length.speeches=rep(NA, length(speeches))
+ff.all<-Corpus(DirSource(folder.path))
+
+
+ff.all<-tm_map(ff.all, stripWhitespace)
+ff.all<-tm_map(ff.all, content_transformer(tolower))
+ff.all<-tm_map(ff.all, removeWords, stopwords("english"))
+ff.all<-tm_map(ff.all, removeWords, character(0))
+ff.all<-tm_map(ff.all, removePunctuation)
+dtm<-DocumentTermMatrix(ff.all)
+dtm<-as.matrix(dtm)
+
+```
+
+
+```{r,fig.width=15, echo=TRUE, fig.width=15}
+name<-rownames(dtm)
+name<-substr(name,6,nchar(name)-6)
+party_clu<-data.frame(name=name)
+
+setwd("../data/")
+Info<-read.xlsx("InaugurationInfo.xlsx",1)
+date<-read.csv("date.csv")
+
+date$Date<-as.character(date$Date)
+year<-substr(date$Date,nchar(date$Date)-3,nchar(date$Date))
+year<-year[year!=""]
+
+Info$date<-year
+
+
+Info_sort<-Info[order(Info$File),]
+all.equal(Info_sort$File,party_clu$name)
+
+party_clu$party<-Info_sort$Party
+rownames(dtm)<-party_clu$party
+
+dtm.scale<-scale(dtm)
+dist<-dist(dtm.scale,method="euclidian")
+hclu<-agnes(dist,method="complete")
+plot(hclu)
+```
+
+
+```{r,fig.width=18, echo=TRUE, fig.width=18}
+year_clu<-data.frame(year=Info_sort$date)
+rownames(dtm)<-year_clu$year
+
+dtm.scale<-scale(dtm)
+dist<-dist(dtm.scale,method="euclidian")
+hclu<-agnes(dist,method="complete")
+plot(hclu)
+```
+
+
+
+
+```{r}
+tdm.all<-TermDocumentMatrix(ff.all)
+tdm.tidy=tidy(tdm.all)
+
+tdm.tidy$name<-substr(tdm.tidy$document,6,nchar(tdm.tidy$document)-6)
+ana_party<-merge(tdm.tidy,Info,by.x="name",by.y="File")
+```
