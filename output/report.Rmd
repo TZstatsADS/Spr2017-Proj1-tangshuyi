@@ -22,7 +22,7 @@ output: html_notebook
 *2. In recession time, vocabulary richness is significantly higher*
 
 
-*3. Political Affiliation has no or little influence on inaugural speeches *
+*3. Political Affiliation has no or little influence on inaugural speeches*
 
 
 *4. US presidential inaugural addresses seem to be mostly determined by individual style of each speaker but some important circumstances such as war or recession can affect*
