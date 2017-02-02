@@ -1,0 +1,282 @@
+---
+title: "GR5243 Project 1"
+author: "Shuyi Tang  UNI:st3037"
+output: html_notebook
+---
+
+
+<br/>
+<br/>
+<font size=5>**Project Description**
+
+
+<font size=3>The task is to find some interesting pattern or trend of inaugural speeches of U.S. presidents. My project is mainly based on a journal article which is about the quantitative analysis on inaugural address. From my perspective, some of the arguments in this article, to some extent, are not correct. In this project I have tested 4 conclusions from this article, including\font
+  
+
+<br/>
+<br/>
+
+*1. The richness of vocabulary keep stable no matter it is in  wartime or not*
+
+
+*2. In recession time, vocabulary richness is significantly higher*
+
+
+*3. Political Affiliation has no or little influence on inaugural speeches *
+
+
+*4. US presidential inaugural addresses seem to be mostly determined by individual style of each speaker but some important circumstances such as war or recession can affect*
+
+
+<br/>
+<br/>
+```{r, include=FALSE}
+library(xlsx)
+library(qdap)
+library(ggplot2)
+library(plotly)
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(tidytext)
+```
+<br/>
+<br/>
+<font size=5>**How to calculate the vocabulary richness?**
+
+<font size=3>My method was derived from an answer on Quora. \ https://www.quora.com/What-do-you-think-about-Donald-Trumps-inaugural-speech
+
+
+It requires the number of unique words and the number of sentences in the speech. 
+
+
+$vocabulary$ $richness$ $=$ $\frac{unique \  words}{sentences}$
+
+The lower the ratio, the more limit vocabulary.
+
+With the pacakge "qdap", the function word_split() and sentence_detect() can be uesd to find the number of unique words and setences easily.
+
+
+In the dataframe the vriable var indicates the vocabulary richness.
+
+
+
+```{r, echo=TRUE,warning=FALSE}
+
+setwd("../data/")
+Info<-read.xlsx("InaugurationInfo.xlsx",1)
+date<-read.csv("date.csv")
+
+setwd("../data/InauguralSpeeches/")
+
+
+count<-function(name){
+  n_sentence<-length(sent_detect(name))
+  
+  word<-word_split(name)# seperate words
+  word<-strip(word[[1]])# remove punctuation
+  word<-word[word!=""] 
+  word<-unique(word) # delete duplicate words
+  n_word<-length(word)
+  
+  return(c(n_sentence,n_word))
+}
+
+
+filename<-paste("inaug",Info$File,"-",Info$Term,".txt",collapse = NULL,sep="")
+
+matrix_count<-matrix(NA,ncol=3,nrow = 58)
+
+for(i in 1:(length(filename)-1)){
+  
+  text<-readLines(filename[i],warn = FALSE)
+  matrix_count[i,2:3]<-count(text)
+  
+}
+
+```
+
+```{r, include=FALSE}
+count<-as.data.frame(matrix_count)
+colnames(count)<-c("file","sentence","word")
+count$file<-paste(Info$File,Info$Term)
+count$var<-count$word/count$sentence
+count$party<-Info$Party
+
+
+date$Date<-as.character(date$Date)
+year<-substr(date$Date,nchar(date$Date)-3,nchar(date$Date))
+year<-year[year!=""]
+
+count$year<-year
+count$year<-as.numeric(count$year)
+```
+
+
+
+<br/>
+<br/>
+
+
+<font size=5>**Wartime**
+<br/>
+<br/>
+<font size=3>Make the plot of vocabulary richness verses the year of the inaugural speeches and mainly consider American Civil War, First World War, Second World War, Cold War that are inveatigated in the article.
+
+
+The year of these wars are as follows, comes from Wekipedia.
+
+
+<br/>1861-1865  American Civil War
+<br/>1914-1918  World War I
+<br/>1939-1945  World War II
+<br/>1947-1991  Cold War
+
+
+```{r, echo=FALSE, fig.height=8, fig.width=11}
+p<-ggplot(data=count)+
+  geom_point(mapping = aes(x=year,y=var,col=party))+
+  geom_line(mapping = aes(x=year,y=var,col="blue"))+
+  geom_text(x=1942,y=8,label="ww2")+
+  geom_text(x=1916,y=8,label="ww1")+
+  geom_text(x=1862,y=6,label="civil war")+
+  geom_text(x=1947,y=5,label="cold war start")+
+  geom_text(x=1991,y=6,label="cold war end")
+
+ggplotly(p)
+```
+
+
+As I found, the tendency of the vocabulary richness gradually became lower as time went by. What's more, I think the vocabulary richness during civil war, WW1 and WW2 actually can be regard as the local minimum. Rather as the conculsion in the artical, the vocabulary richness of inaugural speeches in wartime is relatively lower than other inaugural speeches in that period. 
+
+
+<br/>
+<br/>
+
+
+<font size=5>**Financial crisis**
+<br/>
+<br/>
+
+<font size=3>For this part, I focused on 6 US financial crisis that heappened during the period from 19th century to now, including
+
+
+<br/>1. Panic of 1837 每 pervasive USA economic recession w/ bank failures; a 5 year depression ensued
+<br/>2. Panic of 1893 每 a panic in the United States marked by the collapse of railroad overbuilding and shaky railroad financing which set off a series of bank failures
+<br/>3. Panic of 1907 每 pervasive USA economic recession w/ bank failures
+<br/>4. Wall Street Crash of 1929, followed by the Great Depression 每 the largest and most important economic depression in the 20th century
+<br/>5. 1989每91 每 United States Savings & Loan crisis
+<br/>6. 2007每08 每 Global financial crisis
+
+The information above comes from Wikipedia \ https://en.wikipedia.org/wiki/Financial_crisis
+
+
+```{r, echo=FALSE, fig.height=8, fig.width=11}
+p<-ggplot(data=count)+
+  geom_point(mapping = aes(x=year,y=var,col=party))+
+  geom_line(mapping = aes(x=year,y=var,col="red"))+
+  geom_text(x=1837,y=11,label="Panic 1837")+
+  geom_text(x=1893,y=14,label="Panic 1893")+
+  geom_text(x=1907,y=8,label="Panic 1907")+
+  geom_text(x=1929,y=5.5,label="wall street")+
+  geom_text(x=2008,y=6.7,label="global")+
+  geom_text(x=1989,y=4,label="saving&loan")
+  
+ggplotly(p)
+```
+
+From the plot above, it is safe to conclude that the arguent *In recession time, vocabulary richness is significantly higher* is not correct. Apparently, at 1989, 1925 and 1907, the vocabulary richness were extremely low also much lower than other speeches in that period.
+
+
+
+<br/><font size=5>**Political affiliation**
+<br/>
+<br/>
+
+<font size=3> In the article, it stated that the influence factors are personal style and important circumstances. Additionally, the political affliation does not affect inaugural speeches.
+
+<br/>However, I maintained that ploitical affliation can exert an influence on  the speeches since the frequnetly used words of two parties are distinct.
+
+
+Here I try to find the words that appeared many times in speeches from one party but rarely mentioned in the other one. For example, if the word "happy" was talked for 5 times in speech of A but only mentioned for 1 time in speech of B, then "happy" could be regard as the special word for A.
+
+To measure this feature, I calculate the odd ratio of each word.
+
+$odd \ ratio=log\frac{frequncy\ in\ demoncratic}{frequncy\ in republican}$
+
+
+
+When the odd ratio is close to 0, this word is common in speeches from two parties.This can help to delete some words that are often uesd by both parties, such as nation, people, government.
+
+
+If the value is positive as well as relatively large, then the word can be considered as a special word for speeches of presidnes from democratic party. 
+
+```{r, include=FALSE}
+folder.path="../data/InauguralSpeeches/"
+speeches=list.files(path = folder.path, pattern = "*.txt")
+prez.out=substr(speeches, 6, nchar(speeches)-4)
+
+length.speeches=rep(NA, length(speeches))
+ff.all<-Corpus(DirSource(folder.path))
+
+
+ff.all<-tm_map(ff.all, stripWhitespace)
+ff.all<-tm_map(ff.all, content_transformer(tolower))
+ff.all<-tm_map(ff.all, removeWords, stopwords("english"))
+ff.all<-tm_map(ff.all, removeWords, character(0))
+ff.all<-tm_map(ff.all, removePunctuation)
+mylist<-c("can","shall","should","will","may","must","make")
+ff.all<-tm_map(ff.all,removeWords,mylist)
+
+
+tdm.all<-TermDocumentMatrix(ff.all)
+tdm.tidy=tidy(tdm.all)
+
+tdm.tidy$name<-substr(tdm.tidy$document,6,nchar(tdm.tidy$document)-6)
+unique_name<-match(tdm.tidy$name,Info$File)
+tdm.tidy$party<-Info$Party[unique_name]
+
+ana_party<-tdm.tidy[,c(1,3,5)]
+w_Repub<-ana_party[ana_party$party=="Republican",1:2]
+w_Demo<-ana_party[ana_party$party=="Democratic",1:2]
+
+
+w_Repub<-summarise(group_by(w_Repub, term), sum(count))
+w_Demo<-summarise(group_by(w_Demo, term), sum(count))
+
+w_ana<-merge(w_Demo,w_Repub,by="term",all = TRUE)
+colnames(w_ana)<-c("term","Democount","Repubcount")
+w_ana$Democount[is.na(w_ana$Democount)]<-0
+w_ana$Repubcount[is.na(w_ana$Repubcount)]<-0
+```
+
+
+```{r, echo=TRUE}
+w_ana$odd<-log(w_ana$Demo/w_ana$Repub)
+
+Repub<-w_ana[w_ana$odd==-Inf|w_ana$odd<(-0.8),c(1,3)]
+Demo<-w_ana[w_ana$odd==Inf|w_ana$odd>(0.8),c(1,2)]
+```
+
+
+```{r,warning=FALSE, echo=TRUE, warning=FALSE}
+set.seed(1234)
+wordcloud(words = Demo$term, freq = Demo$Democount, min.freq = 1, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+
+wordcloud(words = Repub$term, freq = Repub$Repubcount, min.freq = 1, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+```
+
+
+<br/>
+According to the wordcloud, the most salient words are democracy and freedom. To some extent, the most special words actually mirror the important belif and concentration of the party.
+
+<br/>
+<br/>
+
+<font size=5>**Conclusion**
+<br/>
+<br/>
+Through the analysis, I think the arguments in this article are not accurate and correct. Firstly, the vocabulary richness was becoming lower and lower over time. Moreover, the vocabulary richness during the wartime was usually the local minimum. Secondly, in recession time where vocabulary richness was significantly lower rather than higher. Finally, the speeches were relevant to the political affiliation and the characteristic words of speeches from the party, to a certain extent, implied their core concept.
+
