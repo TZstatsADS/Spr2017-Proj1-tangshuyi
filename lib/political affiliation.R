@@ -2,6 +2,8 @@ library(tm)
 library(wordcloud)
 library(RColorBrewer)
 library(tidytext)
+library(xlsx)
+library(dplyr)
 
 setwd("../data/")
 Info<-read.xlsx("InaugurationInfo.xlsx",1)
@@ -22,7 +24,7 @@ ff.all<-tm_map(ff.all, content_transformer(tolower))
 ff.all<-tm_map(ff.all, removeWords, stopwords("english"))
 ff.all<-tm_map(ff.all, removeWords, character(0))
 ff.all<-tm_map(ff.all, removePunctuation)
-mylist<-c("can","shall","should","will","may","must")
+mylist<-c("can","shall","should","will","may","must","make")
 ff.all<-tm_map(ff.all,removeWords,mylist)
 
 

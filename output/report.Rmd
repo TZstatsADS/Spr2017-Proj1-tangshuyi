@@ -10,7 +10,7 @@ output: html_notebook
 <font size=5>**Project Description**
 
 
-<font size=3>The task is to find some interesting pattern or trend of inaugural speeches of U.S. presidents. My project is mainly based on a journal article which is about the quantitative analysis on inaugural address. From my perspective, some of the arguments in this article, to some extent, are not correct. In this project I have tested 4 conclusions from this article, including\font
+<font size=3>The task is to find some interesting pattern or trend of inaugural speeches of U.S. presidents. My project is mainly based on a journal article which is about the quantitative analysis on inaugural address. From my perspective, some of the arguments in this article, to some extent, are not correct. In this project I have tested 4 conclusions from this article, including
   
 
 <br/>
@@ -27,8 +27,8 @@ output: html_notebook
 
 *4. US presidential inaugural addresses seem to be mostly determined by individual style of each speaker but some important circumstances such as war or recession can affect*
 
-
 <br/>
+load the packages
 <br/>
 ```{r, include=FALSE}
 library(xlsx)
@@ -39,12 +39,14 @@ library(tm)
 library(wordcloud)
 library(RColorBrewer)
 library(tidytext)
+library(dplyr)
 ```
 <br/>
 <br/>
 <font size=5>**How to calculate the vocabulary richness?**
 
-<font size=3>My method was derived from an answer on Quora. \ https://www.quora.com/What-do-you-think-about-Donald-Trumps-inaugural-speech
+<font size=3>My method was derived from an answer on Quora. 
+\ https://www.quora.com/What-do-you-think-about-Donald-Trumps-inaugural-speech
 
 
 It requires the number of unique words and the number of sentences in the speech. 
@@ -278,5 +280,5 @@ According to the wordcloud, the most salient words are democracy and freedom. To
 <font size=5>**Conclusion**
 <br/>
 <br/>
-Through the analysis, I think the arguments in this article are not accurate and correct. Firstly, the vocabulary richness was becoming lower and lower over time. Moreover, the vocabulary richness during the wartime was usually the local minimum. Secondly, in recession time where vocabulary richness was significantly lower rather than higher. Finally, the speeches were relevant to the political affiliation and the characteristic words of speeches from the party, to a certain extent, implied their core concept.
+<font size=3>Through the analysis, I think the arguments in this article are not accurate and correct. Firstly, the vocabulary richness was becoming lower and lower over time. Moreover, the vocabulary richness during the wartime was usually the local minimum. Secondly, in recession time where vocabulary richness was significantly lower rather than higher. Finally, the speeches were relevant to the political affiliation and the characteristic words of speeches from the party, to a certain extent, implied their core concept.
 
