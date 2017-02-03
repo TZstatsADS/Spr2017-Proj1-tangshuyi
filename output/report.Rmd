@@ -162,9 +162,9 @@ As I found, the tendency of the vocabulary richness gradually became lower as ti
 <font size=3>For this part, I focused on 6 US financial crisis that heappened during the period from 19th century to now, including
 
 
-<br/>1. Panic of 1837 每 pervasive USA economic recession w/ bank failures; a 5 year depression ensued
+<br/>1. Panic of 1837 每 pervasive USA economic recession / bank failures; a 5 year depression ensued
 <br/>2. Panic of 1893 每 a panic in the United States marked by the collapse of railroad overbuilding and shaky railroad financing which set off a series of bank failures
-<br/>3. Panic of 1907 每 pervasive USA economic recession w/ bank failures
+<br/>3. Panic of 1907 每 pervasive USA economic recession / bank failures
 <br/>4. Wall Street Crash of 1929, followed by the Great Depression 每 the largest and most important economic depression in the 20th century
 <br/>5. 1989每91 每 United States Savings & Loan crisis
 <br/>6. 2007每08 每 Global financial crisis
@@ -203,7 +203,7 @@ Here I try to find the words that appeared many times in speeches from one party
 
 To measure this feature, I calculate the odd ratio of each word.
 
-$odd \ ratio=log\frac{frequncy\ in\ demoncratic}{frequncy\ in republican}$
+$odd \ ratio=log\frac{frequncy\ in\ demoncratic}{frequncy\ in\ republican}$
 
 
 
