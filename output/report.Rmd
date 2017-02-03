@@ -122,7 +122,7 @@ count$year<-as.numeric(count$year)
 <font size=5>**Wartime**
 <br/>
 <br/>
-<font size=3>Make the plot of vocabulary richness verses the year of the inaugural speeches and mainly consider American Civil War, First World War, Second World War, Cold War that are inveatigated in the article.
+<font size=3>Make the plot of vocabulary richness verses the year of the inaugural speeches and mainly consider American Civil War, First World War, Second World War, Cold War that are investigated in the article.
 
 
 The year of these wars are as follows, comes from Wekipedia.
