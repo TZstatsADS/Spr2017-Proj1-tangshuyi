@@ -8,7 +8,7 @@ This is the first and only *individual* (as opposed to *team*) this semester.
 
 Term: Spring 2017
 
-+ Projec title: 
++ Projec title: Analysis of Inaugural Speeches about Vocabulary Richness and Political Affiliation 
 + This project is conducted by  Shuyi Tang
 
 + Project summary: In this project, there are the counteviews toward a journal artical concerning the quantitative analysis of US presidential inaugural addresses. What's more, through the analysis, some results and conclusions that focus on the trend or the pattern of the development of vocabulary richness can be obtained. Also, test whether polictical affiliation would have influence on inaugural speeches.
