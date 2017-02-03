@@ -28,7 +28,6 @@ output: html_notebook
 *4. US presidential inaugural addresses seem to be mostly determined by individual style of each speaker but some important circumstances such as war or recession can affect*
 
 <br/>
-load the packages
 <br/>
 ```{r, include=FALSE}
 library(xlsx)
@@ -52,7 +51,7 @@ library(dplyr)
 It requires the number of unique words and the number of sentences in the speech. 
 
 
-$vocabulary$ $richness$ $=$ $\frac{unique \  words}{sentences}$
+$vocabulary \ richness= \frac{unique \  words}{sentences}$
 
 The lower the ratio, the more limit vocabulary.
 
